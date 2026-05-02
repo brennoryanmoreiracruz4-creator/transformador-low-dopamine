@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Transformador Low Dopamine - Feira de Ciências</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="container">
@@ -16,15 +17,122 @@
         <div class="controls">
             <button id="transformAll" class="btn-primary">🔄 Transformar TODOS em Low Dopamine</button>
             <button id="resetAll" class="btn-secondary">↩️ Voltar ao Original</button>
+            <button id="openDashboard" class="btn-info">📊 Ver Dashboard Científico</button>
+            <button id="openFocusTest" class="btn-info">🎮 Teste de Foco</button>
         </div>
 
         <main>
-            <div class="comparison-grid" id="videoGrid">
-                <!-- Vídeos serão carregados aqui -->
+            <!-- SEÇÃO DE COMPARAÇÃO DE VÍDEOS -->
+            <div id="videoSection" class="section-active">
+                <div class="comparison-grid" id="videoGrid">
+                    <!-- Vídeos serão carregados aqui -->
+                </div>
+            </div>
+
+            <!-- SEÇÃO DE DASHBOARD -->
+            <div id="dashboardSection" class="section-hidden">
+                <div class="dashboard-container">
+                    <h2>📊 Dashboard Científico - Análise de Estimulação</h2>
+                    
+                    <div class="charts-grid">
+                        <div class="chart-wrapper">
+                            <h3>Saturação de Cores</h3>
+                            <canvas id="saturationChart"></canvas>
+                        </div>
+                        <div class="chart-wrapper">
+                            <h3>Contraste Visual</h3>
+                            <canvas id="contrastChart"></canvas>
+                        </div>
+                        <div class="chart-wrapper">
+                            <h3>Brilho</h3>
+                            <canvas id="brightnessChart"></canvas>
+                        </div>
+                        <div class="chart-wrapper">
+                            <h3>Frequência de Cortes (segundos)</h3>
+                            <canvas id="cutsChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-card high-dopamine-card">
+                            <h4>🚨 High Dopamine</h4>
+                            <div class="stat-item">Saturação: <strong>200%</strong></div>
+                            <div class="stat-item">Contraste: <strong>130%</strong></div>
+                            <div class="stat-item">Brilho: <strong>110%</strong></div>
+                            <div class="stat-item">Cortes: <strong>1-2s</strong></div>
+                            <div class="stat-item">Efeito: <strong>Hiperativa</strong></div>
+                        </div>
+                        <div class="stat-card low-dopamine-card">
+                            <h4>✅ Low Dopamine</h4>
+                            <div class="stat-item">Saturação: <strong>30%</strong></div>
+                            <div class="stat-item">Contraste: <strong>80%</strong></div>
+                            <div class="stat-item">Brilho: <strong>90%</strong></div>
+                            <div class="stat-item">Cortes: <strong>5-10s</strong></div>
+                            <div class="stat-item">Efeito: <strong>Calma</strong></div>
+                        </div>
+                    </div>
+
+                    <div class="benefits-section">
+                        <h3>🧠 Benefícios do Low Dopamine</h3>
+                        <ul>
+                            <li>✓ Redução de 60% na estimulação visual</li>
+                            <li>✓ Diminuição de ansiedade em crianças</li>
+                            <li>✓ Melhor capacidade de concentração</li>
+                            <li>✓ Menos dessensibilização neurológica</li>
+                            <li>✓ Melhor qualidade do sono após consumo</li>
+                            <li>✓ Aumento de retenção de informação</li>
+                        </ul>
+                    </div>
+
+                    <button id="backFromDashboard" class="btn-secondary">← Voltar</button>
+                </div>
+            </div>
+
+            <!-- SEÇÃO DE TESTE DE FOCO -->
+            <div id="focusTestSection" class="section-hidden">
+                <div class="focus-test-container">
+                    <h2>🎮 Teste de Foco Interativo</h2>
+                    <p class="test-description">Qual versão você consegue focar melhor? Clique nos quadrados que aparecem!</p>
+                    
+                    <div class="focus-test-grid">
+                        <div class="focus-test-video high-dopamine-test">
+                            <h3>HIGH DOPAMINE 🚨</h3>
+                            <video muted loop autoplay>
+                                <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">
+                            </video>
+                            <div id="clickTarget1" class="click-target"></div>
+                            <div class="test-stats">
+                                <div>Cliques: <span id="clicks1">0</span></div>
+                                <div>Precisão: <span id="accuracy1">0%</span></div>
+                            </div>
+                        </div>
+
+                        <div class="focus-test-video low-dopamine-test">
+                            <h3>LOW DOPAMINE ✅</h3>
+                            <video muted loop autoplay style="filter: saturate(0.3) contrast(0.8) brightness(0.9) hue-rotate(20deg);">
+                                <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">
+                            </video>
+                            <div id="clickTarget2" class="click-target"></div>
+                            <div class="test-stats">
+                                <div>Cliques: <span id="clicks2">0</span></div>
+                                <div>Precisão: <span id="accuracy2">0%</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="test-results" id="testResults" style="display: none;">
+                        <h3>Resultados</h3>
+                        <p id="testConclusion"></p>
+                    </div>
+
+                    <button id="startTest" class="btn-primary">▶️ Iniciar Teste (30s)</button>
+                    <button id="backFromTest" class="btn-secondary">← Voltar</button>
+                </div>
             </div>
         </main>
 
-        <div class="science-section">
+        <!-- SEÇÃO DE CIÊNCIA -->
+        <div class="science-section" id="scienceSection">
             <h2>🧠 Ciência por trás da transformação:</h2>
             <div class="effects-list">
                 <div class="effect">
@@ -43,7 +151,7 @@
         </div>
 
         <footer>
-            <p>Feira de Ciências - Salvando o cérebro das crianças da hiperestimulação</p>
+            <p>Feira de Ciências 2026 - Salvando o cérebro das crianças da hiperestimulação</p>
         </footer>
     </div>
 
