@@ -21,28 +21,47 @@ const defaultVideos = [
     }
 ];
 
-let videosHighDopamine = [...defaultVideos];
+let allVideos = [...defaultVideos];
+let selectedVideos = [...defaultVideos];
+let selectedSlots = {};
 const videoGrid = document.getElementById('videoGrid');
 let isTransformed = false;
 
-// ============= CARREGAR VÍDEOS SALVOS =============
-function loadSavedVideos() {
-    const saved = localStorage.getItem('userVideos');
-    if (saved) {
+// ============= CARREGAR DADOS SALVOS =============
+function loadSavedData() {
+    const savedAll = localStorage.getItem('allVideos');
+    const savedSlots = localStorage.getItem('selectedSlots');
+    
+    if (savedAll) {
         try {
-            videosHighDopamine = JSON.parse(saved);
-            renderVideos();
+            allVideos = JSON.parse(savedAll);
         } catch (e) {
             console.error('Erro ao carregar vídeos salvos');
         }
-    } else {
-        renderVideos();
     }
+    
+    if (savedSlots) {
+        try {
+            selectedSlots = JSON.parse(savedSlots);
+        } catch (e) {
+            console.error('Erro ao carregar slots salvos');
+        }
+    }
+    
+    updateSelectedVideos();
+    renderVideos();
 }
 
-// ============= SALVAR VÍDEOS NO LOCAL STORAGE =============
-function saveVideos() {
-    localStorage.setItem('userVideos', JSON.stringify(videosHighDopamine));
+// ============= ATUALIZAR VÍDEOS SELECIONADOS =============
+function updateSelectedVideos() {
+    selectedVideos = [];
+    for (let i = 0; i < 5; i++) {
+        if (selectedSlots[i] !== undefined) {
+            selectedVideos.push(allVideos[selectedSlots[i]]);
+        } else {
+            selectedVideos.push(allVideos[i] || defaultVideos[i]);
+        }
+    }
 }
 
 // ============= UPLOAD DE VÍDEOS =============
@@ -60,30 +79,61 @@ document.getElementById('videoInput').addEventListener('change', (e) => {
                 name: file.name.replace(/\.[^/.]+$/, ''),
                 src: event.target.result
             };
-            videosHighDopamine.push(videoData);
-            saveVideos();
-            renderVideos();
+            allVideos.push(videoData);
+            localStorage.setItem('allVideos', JSON.stringify(allVideos));
+            renderVideoSelector();
         };
         reader.readAsDataURL(file);
     });
     
-    // Limpar o input
     e.target.value = '';
 });
 
-// ============= DELETAR VÍDEO =============
-function deleteVideo(index) {
-    if (confirm(`Tem certeza que deseja deletar este vídeo?`)) {
-        videosHighDopamine.splice(index, 1);
-        saveVideos();
-        renderVideos();
+// ============= RENDERIZAR SELETOR DE VÍDEOS =============
+function renderVideoSelector() {
+    const selectorGrid = document.getElementById('videoSelectorGrid');
+    selectorGrid.innerHTML = '';
+    
+    for (let i = 0; i < 5; i++) {
+        const card = document.createElement('div');
+        card.className = 'video-selector-card';
+        
+        let selectHTML = `
+            <h3>Slot ${i + 1}</h3>
+            <select onchange="selectVideoForSlot(${i}, this.value)">
+                <option value="-1">-- Selecione um vídeo --</option>
+        `;
+        
+        allVideos.forEach((video, index) => {
+            const selected = selectedSlots[i] === index ? 'selected' : '';
+            selectHTML += `<option value="${index}" ${selected}>${video.name}</option>`;
+        });
+        
+        selectHTML += '</select>';
+        card.innerHTML = selectHTML;
+        selectorGrid.appendChild(card);
     }
+}
+
+// ============= SELECIONAR VÍDEO PARA SLOT =============
+function selectVideoForSlot(slotIndex, videoIndex) {
+    videoIndex = parseInt(videoIndex);
+    
+    if (videoIndex === -1) {
+        delete selectedSlots[slotIndex];
+    } else {
+        selectedSlots[slotIndex] = videoIndex;
+    }
+    
+    localStorage.setItem('selectedSlots', JSON.stringify(selectedSlots));
+    updateSelectedVideos();
+    renderVideos();
 }
 
 // ============= RENDERIZAR VÍDEOS =============
 function renderVideos() {
     videoGrid.innerHTML = '';
-    videosHighDopamine.forEach((video, index) => {
+    selectedVideos.forEach((video, index) => {
         const pair = createVideoPair(video, index);
         videoGrid.appendChild(pair);
     });
@@ -94,10 +144,7 @@ function createVideoPair(video, index) {
     const pair = document.createElement('div');
     pair.className = 'video-pair';
     pair.innerHTML = `
-        <h3>
-            <span>${video.name}</span>
-            <button class="delete-video-btn" onclick="deleteVideo(${index})">✕</button>
-        </h3>
+        <h3>Slot ${index + 1}</h3>
         <div class="video-row">
             <div class="video-container high-dopamine">
                 <video muted loop autoplay playsinline controls>
@@ -116,8 +163,68 @@ function createVideoPair(video, index) {
     return pair;
 }
 
-// Carregar vídeos ao iniciar
-loadSavedVideos();
+// Carregar dados ao iniciar
+loadSavedData();
+
+// ============= NAVEGAÇÃO ENTRE SEÇÕES =============
+function hideAllSections() {
+    document.getElementById('videoSection').classList.remove('section-active');
+    document.getElementById('videoSection').classList.add('section-hidden');
+    document.getElementById('configureSection').classList.remove('section-active');
+    document.getElementById('configureSection').classList.add('section-hidden');
+    document.getElementById('dashboardSection').classList.remove('section-active');
+    document.getElementById('dashboardSection').classList.add('section-hidden');
+    document.getElementById('focusTestSection').classList.remove('section-active');
+    document.getElementById('focusTestSection').classList.add('section-hidden');
+    document.getElementById('scienceSection').classList.remove('section-active');
+    document.getElementById('scienceSection').classList.add('section-hidden');
+}
+
+document.getElementById('configureVideosBtn').addEventListener('click', () => {
+    hideAllSections();
+    document.getElementById('configureSection').classList.add('section-active');
+    document.getElementById('configureSection').classList.remove('section-hidden');
+    renderVideoSelector();
+});
+
+document.getElementById('openDashboard').addEventListener('click', () => {
+    hideAllSections();
+    document.getElementById('dashboardSection').classList.add('section-active');
+    document.getElementById('dashboardSection').classList.remove('section-hidden');
+    document.getElementById('scienceSection').classList.add('section-active');
+    document.getElementById('scienceSection').classList.remove('section-hidden');
+    initDashboardCharts();
+});
+
+document.getElementById('openFocusTest').addEventListener('click', () => {
+    hideAllSections();
+    document.getElementById('focusTestSection').classList.add('section-active');
+    document.getElementById('focusTestSection').classList.remove('section-hidden');
+});
+
+document.getElementById('backFromConfig').addEventListener('click', () => {
+    hideAllSections();
+    document.getElementById('videoSection').classList.add('section-active');
+    document.getElementById('videoSection').classList.remove('section-hidden');
+    document.getElementById('scienceSection').classList.add('section-active');
+    document.getElementById('scienceSection').classList.remove('section-hidden');
+});
+
+document.getElementById('backFromDashboard').addEventListener('click', () => {
+    hideAllSections();
+    document.getElementById('videoSection').classList.add('section-active');
+    document.getElementById('videoSection').classList.remove('section-hidden');
+    document.getElementById('scienceSection').classList.add('section-active');
+    document.getElementById('scienceSection').classList.remove('section-hidden');
+});
+
+document.getElementById('backFromTest').addEventListener('click', () => {
+    hideAllSections();
+    document.getElementById('videoSection').classList.add('section-active');
+    document.getElementById('videoSection').classList.remove('section-hidden');
+    document.getElementById('scienceSection').classList.add('section-active');
+    document.getElementById('scienceSection').classList.remove('section-hidden');
+});
 
 // ============= CONTROLES DE VÍDEO =============
 document.getElementById('transformAll').addEventListener('click', () => {
@@ -153,49 +260,6 @@ setInterval(() => {
         }, 4000);
     }
 }, 8000);
-
-// ============= NAVEGAÇÃO ENTRE SEÇÕES =============
-function hideAllSections() {
-    document.getElementById('videoSection').classList.remove('section-active');
-    document.getElementById('videoSection').classList.add('section-hidden');
-    document.getElementById('dashboardSection').classList.remove('section-active');
-    document.getElementById('dashboardSection').classList.add('section-hidden');
-    document.getElementById('focusTestSection').classList.remove('section-active');
-    document.getElementById('focusTestSection').classList.add('section-hidden');
-    document.getElementById('scienceSection').classList.remove('section-active');
-    document.getElementById('scienceSection').classList.add('section-hidden');
-}
-
-document.getElementById('openDashboard').addEventListener('click', () => {
-    hideAllSections();
-    document.getElementById('dashboardSection').classList.add('section-active');
-    document.getElementById('dashboardSection').classList.remove('section-hidden');
-    document.getElementById('scienceSection').classList.add('section-active');
-    document.getElementById('scienceSection').classList.remove('section-hidden');
-    initDashboardCharts();
-});
-
-document.getElementById('openFocusTest').addEventListener('click', () => {
-    hideAllSections();
-    document.getElementById('focusTestSection').classList.add('section-active');
-    document.getElementById('focusTestSection').classList.remove('section-hidden');
-});
-
-document.getElementById('backFromDashboard').addEventListener('click', () => {
-    hideAllSections();
-    document.getElementById('videoSection').classList.add('section-active');
-    document.getElementById('videoSection').classList.remove('section-hidden');
-    document.getElementById('scienceSection').classList.add('section-active');
-    document.getElementById('scienceSection').classList.remove('section-hidden');
-});
-
-document.getElementById('backFromTest').addEventListener('click', () => {
-    hideAllSections();
-    document.getElementById('videoSection').classList.add('section-active');
-    document.getElementById('videoSection').classList.remove('section-hidden');
-    document.getElementById('scienceSection').classList.add('section-active');
-    document.getElementById('scienceSection').classList.remove('section-hidden');
-});
 
 // ============= DASHBOARD COM CHARTS =============
 let charts = {};
