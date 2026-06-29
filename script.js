@@ -1,23 +1,23 @@
 const videosHighDopamine = [
     {
         name: "Cocomelon",
-        src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+        src: "https://www.w3schools.com/html/mov_bbb.mp4"
     },
     {
         name: "Baby Shark",
-        src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
+        src: "https://www.w3schools.com/html/movie.mp4"
     },
     {
         name: "Galinha Pintadinha",
-        src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"
+        src: "https://www.w3schools.com/html/mov_bbb.mp4"
     },
     {
         name: "Patrulha Canina",
-        src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+        src: "https://www.w3schools.com/html/movie.mp4"
     },
     {
         name: "Pocoyo",
-        src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
+        src: "https://www.w3schools.com/html/mov_bbb.mp4"
     }
 ];
 
@@ -32,13 +32,13 @@ function createVideoPair(video) {
         <h3>${video.name}</h3>
         <div class="video-row">
             <div class="video-container high-dopamine">
-                <video muted loop autoplay playsinline>
+                <video muted loop autoplay playsinline controls>
                     <source src="${video.src}" type="video/mp4">
                 </video>
                 <div class="video-label high-label">HIGH DOPAMINE 🚨</div>
             </div>
             <div class="video-container low-dopamine">
-                <video muted loop autoplay playsinline>
+                <video muted loop autoplay playsinline controls>
                     <source src="${video.src}" type="video/mp4">
                 </video>
                 <div class="video-label low-label">LOW DOPAMINE ✅</div>
@@ -239,7 +239,8 @@ let focusTestActive = false;
 let focusTestTime = 30;
 let clicks1 = 0, clicks2 = 0;
 let hits1 = 0, hits2 = 0;
-let currentActiveTarget = null; // Rastreia qual alvo está ativo
+let currentActiveTarget = null;
+let targetIndex = 0;
 
 function generateRandomPosition(container) {
     const containerRect = container.getBoundingClientRect();
@@ -257,6 +258,7 @@ function startFocusTest() {
     hits1 = 0;
     hits2 = 0;
     currentActiveTarget = null;
+    targetIndex = 0;
 
     document.getElementById('startTest').disabled = true;
     document.getElementById('testResults').style.display = 'none';
@@ -275,7 +277,6 @@ function startFocusTest() {
     }
 
     // Alternar entre alvos a cada 2 segundos (UM DE CADA VEZ)
-    let targetIndex = 0;
     const targetInterval = setInterval(() => {
         if (focusTestActive) {
             // Esconder o alvo anterior
@@ -298,7 +299,6 @@ function startFocusTest() {
     // Mostrar o primeiro alvo
     showRandomTarget(target1, container1);
     currentActiveTarget = target1;
-    let targetIndex = 0;
 
     target1.addEventListener('click', () => {
         if (focusTestActive && target1.classList.contains('active')) {
