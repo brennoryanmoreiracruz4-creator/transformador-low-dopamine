@@ -1,4 +1,4 @@
-const videosHighDopamine = [
+const defaultVideos = [
     {
         name: "Cocomelon",
         src: "https://www.w3schools.com/html/mov_bbb.mp4"
@@ -21,15 +21,83 @@ const videosHighDopamine = [
     }
 ];
 
+let videosHighDopamine = [...defaultVideos];
 const videoGrid = document.getElementById('videoGrid');
 let isTransformed = false;
 
+// ============= CARREGAR VÍDEOS SALVOS =============
+function loadSavedVideos() {
+    const saved = localStorage.getItem('userVideos');
+    if (saved) {
+        try {
+            videosHighDopamine = JSON.parse(saved);
+            renderVideos();
+        } catch (e) {
+            console.error('Erro ao carregar vídeos salvos');
+        }
+    } else {
+        renderVideos();
+    }
+}
+
+// ============= SALVAR VÍDEOS NO LOCAL STORAGE =============
+function saveVideos() {
+    localStorage.setItem('userVideos', JSON.stringify(videosHighDopamine));
+}
+
+// ============= UPLOAD DE VÍDEOS =============
+document.getElementById('addVideoBtn').addEventListener('click', () => {
+    document.getElementById('videoInput').click();
+});
+
+document.getElementById('videoInput').addEventListener('change', (e) => {
+    const files = Array.from(e.target.files);
+    
+    files.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const videoData = {
+                name: file.name.replace(/\.[^/.]+$/, ''),
+                src: event.target.result
+            };
+            videosHighDopamine.push(videoData);
+            saveVideos();
+            renderVideos();
+        };
+        reader.readAsDataURL(file);
+    });
+    
+    // Limpar o input
+    e.target.value = '';
+});
+
+// ============= DELETAR VÍDEO =============
+function deleteVideo(index) {
+    if (confirm(`Tem certeza que deseja deletar este vídeo?`)) {
+        videosHighDopamine.splice(index, 1);
+        saveVideos();
+        renderVideos();
+    }
+}
+
+// ============= RENDERIZAR VÍDEOS =============
+function renderVideos() {
+    videoGrid.innerHTML = '';
+    videosHighDopamine.forEach((video, index) => {
+        const pair = createVideoPair(video, index);
+        videoGrid.appendChild(pair);
+    });
+}
+
 // ============= CRIAÇÃO DE VÍDEOS =============
-function createVideoPair(video) {
+function createVideoPair(video, index) {
     const pair = document.createElement('div');
     pair.className = 'video-pair';
     pair.innerHTML = `
-        <h3>${video.name}</h3>
+        <h3>
+            <span>${video.name}</span>
+            <button class="delete-video-btn" onclick="deleteVideo(${index})">✕</button>
+        </h3>
         <div class="video-row">
             <div class="video-container high-dopamine">
                 <video muted loop autoplay playsinline controls>
@@ -48,10 +116,8 @@ function createVideoPair(video) {
     return pair;
 }
 
-videosHighDopamine.forEach(video => {
-    const pair = createVideoPair(video);
-    videoGrid.appendChild(pair);
-});
+// Carregar vídeos ao iniciar
+loadSavedVideos();
 
 // ============= CONTROLES DE VÍDEO =============
 document.getElementById('transformAll').addEventListener('click', () => {
