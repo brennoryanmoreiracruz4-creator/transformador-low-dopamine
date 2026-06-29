@@ -91,6 +91,62 @@ header h1 {
     display: none;
 }
 
+/* CONFIGURAÇÃO DE VÍDEOS */
+.config-container {
+    background: rgba(255,255,255,0.1);
+    padding: 30px;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+}
+
+.config-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 2em;
+}
+
+.video-selector-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.video-selector-card {
+    background: rgba(255,255,255,0.15);
+    border: 2px solid rgba(255,255,255,0.3);
+    padding: 20px;
+    border-radius: 15px;
+    transition: all 0.3s ease;
+}
+
+.video-selector-card h3 {
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 1.3em;
+    color: #ffeb3b;
+}
+
+.video-selector-card select {
+    width: 100%;
+    padding: 10px;
+    background: rgba(0,0,0,0.5);
+    color: white;
+    border: 2px solid #2196F3;
+    border-radius: 8px;
+    font-size: 1em;
+    cursor: pointer;
+}
+
+.video-selector-card select option {
+    background: #333;
+    color: white;
+}
+
+.video-selector-card select:hover {
+    background: rgba(0,0,0,0.7);
+}
+
 /* COMPARAÇÃO DE VÍDEOS */
 .comparison-grid {
     display: grid;
@@ -112,26 +168,6 @@ header h1 {
     text-align: center;
     margin-bottom: 20px;
     font-size: 1.5em;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.delete-video-btn {
-    background: #ff4444;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    cursor: pointer;
-    font-size: 0.8em;
-    transition: all 0.3s ease;
-}
-
-.delete-video-btn:hover {
-    background: #cc0000;
-    transform: scale(1.1);
 }
 
 .video-row {
@@ -456,8 +492,7 @@ footer {
         grid-template-columns: 1fr;
     }
 
-    .video-pair h3 {
-        flex-direction: column;
-        gap: 10px;
+    .video-selector-grid {
+        grid-template-columns: 1fr;
     }
 }
