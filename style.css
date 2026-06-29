@@ -105,12 +105,33 @@ header h1 {
     padding: 25px;
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255,255,255,0.2);
+    position: relative;
 }
 
 .video-pair h3 {
     text-align: center;
     margin-bottom: 20px;
     font-size: 1.5em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.delete-video-btn {
+    background: #ff4444;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    font-size: 0.8em;
+    transition: all 0.3s ease;
+}
+
+.delete-video-btn:hover {
+    background: #cc0000;
+    transform: scale(1.1);
 }
 
 .video-row {
@@ -141,7 +162,7 @@ video {
 }
 
 .video-container.low-dopamine video {
-    filter: saturate(0.3) contrast(0.8) brightness(0.9) hue-rotate(20deg);
+    filter: saturate(0.5) brightness(1.1) contrast(0.9) hue-rotate(5deg);
     animation: lowDopamine 3s ease-in-out infinite;
 }
 
@@ -151,8 +172,8 @@ video {
 }
 
 @keyframes lowDopamine {
-    0%, 100% { filter: saturate(0.3) contrast(0.8) brightness(0.9) hue-rotate(20deg); }
-    50% { filter: saturate(0.2) contrast(0.7) brightness(0.85) hue-rotate(30deg); }
+    0%, 100% { filter: saturate(0.5) brightness(1.1) contrast(0.9) hue-rotate(5deg); }
+    50% { filter: saturate(0.45) brightness(1.05) contrast(0.85) hue-rotate(10deg); }
 }
 
 .video-label {
@@ -329,7 +350,7 @@ video {
 }
 
 .low-dopamine-test video {
-    filter: saturate(0.3) contrast(0.8) brightness(0.9) hue-rotate(20deg);
+    filter: saturate(0.5) brightness(1.1) contrast(0.9) hue-rotate(5deg);
     animation: lowDopamine 3s ease-in-out infinite;
 }
 
@@ -433,5 +454,10 @@ footer {
     
     .charts-grid {
         grid-template-columns: 1fr;
+    }
+
+    .video-pair h3 {
+        flex-direction: column;
+        gap: 10px;
     }
 }
