@@ -32,13 +32,13 @@ function createVideoPair(video) {
         <h3>${video.name}</h3>
         <div class="video-row">
             <div class="video-container high-dopamine">
-                <video muted loop autoplay>
+                <video muted loop autoplay playsinline>
                     <source src="${video.src}" type="video/mp4">
                 </video>
                 <div class="video-label high-label">HIGH DOPAMINE 🚨</div>
             </div>
             <div class="video-container low-dopamine">
-                <video muted loop autoplay>
+                <video muted loop autoplay playsinline>
                     <source src="${video.src}" type="video/mp4">
                 </video>
                 <div class="video-label low-label">LOW DOPAMINE ✅</div>
@@ -239,6 +239,7 @@ let focusTestActive = false;
 let focusTestTime = 30;
 let clicks1 = 0, clicks2 = 0;
 let hits1 = 0, hits2 = 0;
+let currentActiveTarget = null; // Rastreia qual alvo está ativo
 
 function generateRandomPosition(container) {
     const containerRect = container.getBoundingClientRect();
@@ -255,6 +256,7 @@ function startFocusTest() {
     clicks2 = 0;
     hits1 = 0;
     hits2 = 0;
+    currentActiveTarget = null;
 
     document.getElementById('startTest').disabled = true;
     document.getElementById('testResults').style.display = 'none';
@@ -272,34 +274,51 @@ function startFocusTest() {
         target.classList.add('active');
     }
 
-    // Mostrar alvos a cada 2 segundos
+    // Alternar entre alvos a cada 2 segundos (UM DE CADA VEZ)
+    let targetIndex = 0;
     const targetInterval = setInterval(() => {
         if (focusTestActive) {
-            showRandomTarget(target1, container1);
-            showRandomTarget(target2, container2);
+            // Esconder o alvo anterior
+            if (currentActiveTarget) {
+                currentActiveTarget.classList.remove('active');
+            }
+            
+            // Mostrar o novo alvo alternadamente
+            if (targetIndex % 2 === 0) {
+                showRandomTarget(target1, container1);
+                currentActiveTarget = target1;
+            } else {
+                showRandomTarget(target2, container2);
+                currentActiveTarget = target2;
+            }
+            targetIndex++;
         }
     }, 2000);
 
+    // Mostrar o primeiro alvo
     showRandomTarget(target1, container1);
-    showRandomTarget(target2, container2);
+    currentActiveTarget = target1;
+    let targetIndex = 0;
 
     target1.addEventListener('click', () => {
-        if (focusTestActive) {
+        if (focusTestActive && target1.classList.contains('active')) {
             clicks1++;
             hits1++;
             document.getElementById('clicks1').textContent = clicks1;
             document.getElementById('accuracy1').textContent = Math.round((hits1 / clicks1) * 100) + '%';
             target1.classList.remove('active');
+            currentActiveTarget = null;
         }
     });
 
     target2.addEventListener('click', () => {
-        if (focusTestActive) {
+        if (focusTestActive && target2.classList.contains('active')) {
             clicks2++;
             hits2++;
             document.getElementById('clicks2').textContent = clicks2;
             document.getElementById('accuracy2').textContent = Math.round((hits2 / clicks2) * 100) + '%';
             target2.classList.remove('active');
+            currentActiveTarget = null;
         }
     });
 
