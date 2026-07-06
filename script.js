@@ -251,16 +251,6 @@ document.getElementById('resetAll').addEventListener('click', () => {
     });
 });
 
-// Demo automática
-setInterval(() => {
-    if (!isTransformed) {
-        document.getElementById('transformAll').click();
-        setTimeout(() => {
-            document.getElementById('resetAll').click();
-        }, 4000);
-    }
-}, 8000);
-
 // ============= DASHBOARD COM CHARTS =============
 let charts = {};
 
