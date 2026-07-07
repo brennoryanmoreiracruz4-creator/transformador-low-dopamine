@@ -150,13 +150,13 @@ function createVideoPair(video, index) {
                 <video muted loop autoplay playsinline controls>
                     <source src="${video.src}" type="video/mp4">
                 </video>
-                <div class="video-label high-label">HIGH DOPAMINE 🚨</div>
+                <div class="video-label high-label">ALTA DOPAMINA 🚨</div>
             </div>
             <div class="video-container low-dopamine">
                 <video muted loop autoplay playsinline controls>
                     <source src="${video.src}" type="video/mp4">
                 </video>
-                <div class="video-label low-label">LOW DOPAMINE ✅</div>
+                <div class="video-label low-label">BAIXA DOPAMINA ✅</div>
             </div>
         </div>
     `;
@@ -233,7 +233,7 @@ document.getElementById('transformAll').addEventListener('click', () => {
         setTimeout(() => {
             container.classList.add('low-dopamine');
             container.classList.remove('high-dopamine');
-            container.querySelector('.video-label').textContent = 'LOW DOPAMINE ✅';
+            container.querySelector('.video-label').textContent = 'BAIXA DOPAMINA ✅';
             container.querySelector('.video-label').className = 'video-label low-label';
         }, index * 200);
     });
@@ -245,7 +245,7 @@ document.getElementById('resetAll').addEventListener('click', () => {
         setTimeout(() => {
             container.classList.add('high-dopamine');
             container.classList.remove('low-dopamine');
-            container.querySelector('.video-label').textContent = 'HIGH DOPAMINE 🚨';
+            container.querySelector('.video-label').textContent = 'ALTA DOPAMINA 🚨';
             container.querySelector('.video-label').className = 'video-label high-label';
         }, index * 200);
     });
@@ -261,7 +261,7 @@ function initDashboardCharts() {
     charts.saturation = new Chart(ctx1, {
         type: 'bar',
         data: {
-            labels: ['High Dopamine', 'Low Dopamine'],
+            labels: ['Alta Dopamina', 'Baixa Dopamina'],
             datasets: [{
                 label: 'Saturação (%)',
                 data: [200, 30],
@@ -285,7 +285,7 @@ function initDashboardCharts() {
     charts.contrast = new Chart(ctx2, {
         type: 'bar',
         data: {
-            labels: ['High Dopamine', 'Low Dopamine'],
+            labels: ['Alta Dopamina', 'Baixa Dopamina'],
             datasets: [{
                 label: 'Contraste (%)',
                 data: [130, 80],
@@ -309,7 +309,7 @@ function initDashboardCharts() {
     charts.brightness = new Chart(ctx3, {
         type: 'bar',
         data: {
-            labels: ['High Dopamine', 'Low Dopamine'],
+            labels: ['Alta Dopamina', 'Baixa Dopamina'],
             datasets: [{
                 label: 'Brilho (%)',
                 data: [110, 90],
@@ -333,7 +333,7 @@ function initDashboardCharts() {
     charts.cuts = new Chart(ctx4, {
         type: 'bar',
         data: {
-            labels: ['High Dopamine', 'Low Dopamine'],
+            labels: ['Alta Dopamina', 'Baixa Dopamina'],
             datasets: [{
                 label: 'Duração de Cortes (segundos)',
                 data: [1.5, 7.5],
@@ -457,9 +457,9 @@ function startFocusTest() {
             const result2 = clicks2 > 0 ? Math.round((hits2 / clicks2) * 100) : 0;
 
             const conclusion = result2 > result1 
-                ? `✅ Você focou MELHOR na versão LOW DOPAMINE! (${result2}% vs ${result1}%)`
+                ? `✅ Você focou MELHOR na versão BAIXA DOPAMINA! (${result2}% vs ${result1}%)`
                 : result1 > result2
-                ? `⚠️ Você focou melhor na HIGH DOPAMINE, mas sinta-se hiperativado!`
+                ? `⚠️ Você focou melhor na ALTA DOPAMINA, mas sinta-se hiperativado!`
                 : `🤔 Foco semelhante nas duas versões!`;
 
             document.getElementById('testConclusion').textContent = conclusion;
